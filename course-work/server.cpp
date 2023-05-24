@@ -1,5 +1,4 @@
 ﻿#pragma comment (lib, "ws2_32.lib")
-
 #include <iostream>
 #include <string>
 #include <stdlib.h>
@@ -66,7 +65,7 @@ int main()
             IsExit = true;
         }
 
-        while (IsExit)
+        while (!IsExit)
         {
             std::cout << "Server: ";
             std::cin.getline(buffer, BUFFER_SIZE);
@@ -89,9 +88,8 @@ int main()
         exit(1);
 
     }
-
     return 0;
-    close(client);
+
 
 }
 

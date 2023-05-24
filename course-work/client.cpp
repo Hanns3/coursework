@@ -1,7 +1,8 @@
+
 #include <iostream>
 #include <string>
 #include <stdlib.h>
-#include <winsock2.h>
+#include <WinSock2.h>
 #include <ws2tcpip.h>
 #include <windows.h>
 
@@ -39,7 +40,7 @@ int main(int argc, const char* arvg[])
 
     if ( iResult==0)
     {
-        std::cout << "=> Connection to server " << inet_ntoa(server_address.sin_addr) << "with port number: " << DEFAULT_PORT << "\n";
+        std::cout << "=> Connection to server "<< "with port number: " << DEFAULT_PORT << "\n";
 
     }
 
@@ -69,8 +70,8 @@ int main(int argc, const char* arvg[])
 
     std::cout << "Goodbye...\n";
 
-
 	return 0;
+    closesocket(client);
 }
 
 bool is_client_connection_close(const char* msg)
