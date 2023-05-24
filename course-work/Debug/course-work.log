@@ -1,0 +1,4 @@
+﻿  course-work.cpp
+C:\Users\LENOVO LEGION Y-520\source\repos\course-work\course-work\course-work.cpp(98,23): warning C4018: <: несоответствие типов со знаком и без знака
+C:\Users\LENOVO LEGION Y-520\source\repos\course-work\course-work\course-work.cpp(105): warning C4715: is_client_connection_close: значение возвращается не при всех путях выполнения
+  course-work.vcxproj -> C:\Users\LENOVO LEGION Y-520\source\repos\course-work\Debug\course-work.exe
