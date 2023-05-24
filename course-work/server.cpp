@@ -2,7 +2,7 @@
 #include <string>
 #include <stdlib.h>
 #include <windows.h>
-#include <winsock.h>
+#include <winsock2.h>
 
 #pragma comment(lib, "ws2_32.lib")
 
@@ -56,7 +56,7 @@ int main()
     {
         strcpy_s(buffer, "=> Server connected");
         send(server, buffer, BUFFER_SIZE, 0);
-    std::cout << "Connected to the clien #1 " << std::endl << "Enter " << CLIENT_CLOSE_CONNECTION_SYMBOL << " to end connection\n\n";
+        std::cout << "Connected to the clien #1 " << std::endl << "Enter " << CLIENT_CLOSE_CONNECTION_SYMBOL << " to end connection\n\n";
 
         std::cout << "Client: ";
         recv(server, buffer, BUFFER_SIZE, 0);
@@ -89,6 +89,7 @@ int main()
         exit(1);
 
     }
+
     return 0;
 
 }
@@ -102,5 +103,6 @@ bool is_client_connection_close(const char* msg)
             return true;
         }
     }
+    return false;
 }
 
