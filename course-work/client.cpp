@@ -1,11 +1,13 @@
 #include <iostream>
 #include <string>
 #include <stdlib.h>
-#include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
+#include <windows.h>
 
-#pragma comment(lib, "ws2_32.lib")
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+
+#pragma comment (lib, "ws2_32.lib")
 
 #define SERVER_IP "127.0.0.1"
 #define DEFAULT_PORT 1601

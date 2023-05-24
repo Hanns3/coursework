@@ -1,10 +1,10 @@
-﻿#include <iostream>
+﻿#pragma comment (lib, "ws2_32.lib")
+
+#include <iostream>
 #include <string>
 #include <stdlib.h>
-#include <windows.h>
-#include <winsock2.h>
-
-#pragma comment(lib, "ws2_32.lib")
+#include <WinSock2.h>
+#include <ws2tcpip.h>
 
 #define ERROR_S "SERVER ERROR: "
 #define DEFAULT_PORT 1601
@@ -91,6 +91,7 @@ int main()
     }
 
     return 0;
+    close(client);
 
 }
 
