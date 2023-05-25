@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <WinSock2.h>
 #include <Ws2tcpip.h>
+#include <thread>
 
 #pragma comment (lib, "Ws2_32.lib")
 
@@ -13,19 +14,8 @@
 
 bool is_client_connection_close(const char* msg);
 
-int main()
+void set_up_socket(SOCKET &client, sockaddr_in &server_address)
 {
-    int client;
-    int server;
-    WSADATA wsaData;
-
-    struct sockaddr_in server_address;
-
-    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-        std::cout << "Ошибка при инициализации Winsock." << std::endl;
-        return 1;
-    }
-
     client = socket(AF_INET, SOCK_STREAM, 0);
     if (client < 0)
     {
@@ -39,65 +29,88 @@ int main()
     server_address.sin_family = AF_INET;
     server_address.sin_addr.s_addr = htons(INADDR_ANY);
 
-    SOCKET ret = bind(client, reinterpret_cast<struct sockaddr*>(&server_address), sizeof(server_address));
+    int ret = bind(client, reinterpret_cast<struct sockaddr*>(&server_address), sizeof(server_address));
 
     if (ret < 0)
     {
         std::cout << ERROR_S << "binding connection. Socket has already been establishing.\n";
-        return -1;
+        return;
     }
-    int size = sizeof(server_address);
-    std::cout << "SERVER: " << "Listening clients...\n";
-    listen(client, 1);
+}
 
-    server = accept(client, reinterpret_cast<struct sockaddr*>(&server_address), &size);
+
+void handle_client(SOCKET &server)
+{
     if (server < 0)
     {
         std::cout << ERROR_S << "Can't accepting client.\n";
     }
-
-    char buffer[BUFFER_SIZE];
-    bool IsExit = false;
-    while (server > 0)
-    {
-        strcpy_s(buffer, "=> Server connected");
-        send(server, buffer, BUFFER_SIZE, 0);
-        std::cout << "Connected to the clien #1 " << std::endl << "Enter " << CLIENT_CLOSE_CONNECTION_SYMBOL << " to end connection\n\n";
-
-        std::cout << "Client: ";
-        recv(server, buffer, BUFFER_SIZE, 0);
-        std::cout << buffer << std::endl;
-        if (is_client_connection_close(buffer))
+    std::thread t([&server]
         {
-            IsExit = true;
-        }
-
-        while (!IsExit)
-        {
-            std::cout << "Server: ";
-            std::cin.getline(buffer, BUFFER_SIZE);
-            send(server, buffer, BUFFER_SIZE, 0);
-            if (is_client_connection_close(buffer))
+            char buffer[BUFFER_SIZE];
+            bool IsExit = false;
+            while (server > 0)
             {
-                break;
-            }
+                strcpy_s(buffer, "=> Server connected");
+                send(server, buffer, BUFFER_SIZE, 0);
+                std::cout << "Connected to the clien #1 " << std::endl << "Enter " << CLIENT_CLOSE_CONNECTION_SYMBOL << " to end connection\n";
 
-            std::cout << "Client: ";
-            recv(server, buffer, BUFFER_SIZE, 0);
-            std::cout << buffer << std::endl;
-            if (is_client_connection_close(buffer))
-            {
-                break;
-            }
-        }
-        std::cout << "\nGoodbye..." << std::endl;
-        IsExit = false;
-        exit(1);
+                std::cout << "Client: ";
+                recv(server, buffer, BUFFER_SIZE, 0);
+                std::cout << buffer << std::endl;
+                if (is_client_connection_close(buffer))
+                {
+                    IsExit = true;
+                }
 
+                while (!IsExit)
+                {
+                    std::cout << "Server: ";
+                    std::cin.getline(buffer, BUFFER_SIZE);
+                    send(server, buffer, BUFFER_SIZE, 0);
+                    if (is_client_connection_close(buffer))
+                    {
+                        break;
+                    }
+
+                    std::cout << "Client: ";
+                    recv(server, buffer, BUFFER_SIZE, 0);
+                    std::cout << buffer << std::endl;
+                    if (is_client_connection_close(buffer))
+                    {
+                        break;
+                    }
+                }
+                std::cout << "\nGoodbye..." << std::endl;
+                IsExit = false;
+
+            }
+        });
+    t.join();
+}
+
+int main()
+{
+    SOCKET client;
+    SOCKET server;
+    WSADATA wsaData;
+
+    struct sockaddr_in server_address;
+
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+        std::cout << "Ошибка при инициализации Winsock." << std::endl;
+        return 1;
     }
+    
+    set_up_socket(client, server_address);
+    int size_of_address = sizeof(server_address);
+    std::cout << "SERVER: " << "Listening clients...\n";
+    listen(client, 1);
+    server = accept(client, reinterpret_cast<struct sockaddr*>(&server_address), &size_of_address);
+    std::thread t(handle_client, &server);
+    t.detach();
     return 0;
-
-
+    
 }
 
 bool is_client_connection_close(const char* msg)
