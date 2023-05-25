@@ -24,7 +24,7 @@ int main(int argc, const char* arvg[])
     struct sockaddr_in server_address;
 
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-        std::cout << "Ошибка при инициализации Winsock." << std::endl;
+        std::cout << "SERVER ERROR: Initializing WinSock" << std::endl;
         return 1;
     }
 
@@ -72,9 +72,9 @@ int main(int argc, const char* arvg[])
     }
 
     std::cout << "Goodbye...\n";
-
-	return 0;
     closesocket(client);
+	return 0;
+    
 }
 
 bool is_client_connection_close(const char* msg)
