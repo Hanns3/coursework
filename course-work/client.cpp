@@ -1,14 +1,13 @@
-
 #include <iostream>
 #include <string>
 #include <stdlib.h>
 #include <WinSock2.h>
-#include <ws2tcpip.h>
+#include <Ws2tcpip.h>
 #include <windows.h>
 
-#define _WINSOCK_DEPRECATED_NO_WARNINGS
-
-#pragma comment (lib, "ws2_32.lib")
+#pragma comment (lib, "Ws2_32.lib")
+#pragma comment (lib, "Mswsock.lib")
+#pragma comment (lib, "AdvApi32.lib")
 
 #define SERVER_IP "127.0.0.1"
 #define DEFAULT_PORT 1601
@@ -32,27 +31,25 @@ int main(int argc, const char* arvg[])
 
     server_address.sin_port = htons(DEFAULT_PORT);
     server_address.sin_family = AF_INET;
-    inet_pton(AF_INET, SERVER_IP, &server_address.sin_addr);
+    std::cout << "inet_pton: " << inet_pton(AF_INET, SERVER_IP, &server_address.sin_addr);
 
-    std::cout << "Client socket created.";
+    std::cout << "\nClient socket created.";
 
-    SOCKET iResult = connect(client, (SOCKADDR*)&server_address, sizeof(server_address));
-
-    if ( iResult==0)
+    SOCKET ret = connect(client, (SOCKADDR*)&server_address, sizeof(server_address));
+    char buffer[BUFFER_SIZE];
+    if ( ret == 0)
     {
-        std::cout << "=> Connection to server "<< "with port number: " << DEFAULT_PORT << "\n";
-
+        std::cout << "=> Connection to server "<< inet_ntop(AF_INET,reinterpret_cast<sockaddr*>(&server_address.sin_addr),buffer, BUFFER_SIZE) << "with port number: " << DEFAULT_PORT << "\n";
     }
 
-    char buffer[BUFFER_SIZE];
     std::cout << "Waiting for server confirmation...\n";
     recv(client, buffer, BUFFER_SIZE, 0);
     std::cout << "=> Connection established.\n" << "Enter " << CLIENT_CLOSE_CONNECTION_SYMBOL << " to close the connection";
 
     while (true)
     {
-        std::cout << "CLient: ";
-        std::cin.getline(buffer, BUFFER_SIZE, 0);
+        std::cout << "\nClient: ";
+        std::cin.getline(buffer, BUFFER_SIZE);
         send(client, buffer, BUFFER_SIZE, 0);
         if (is_client_connection_close(buffer))
         {
@@ -60,7 +57,7 @@ int main(int argc, const char* arvg[])
         }
 
         std::cout << "Server: ";
-        std::cin.getline(buffer, BUFFER_SIZE, 0);
+        std::cin.getline(buffer, BUFFER_SIZE);
         recv(client, buffer, BUFFER_SIZE, 0);
         if (is_client_connection_close(buffer))
         {

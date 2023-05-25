@@ -1,9 +1,10 @@
-﻿#pragma comment (lib, "ws2_32.lib")
-#include <iostream>
+﻿#include <iostream>
 #include <string>
 #include <stdlib.h>
 #include <WinSock2.h>
-#include <ws2tcpip.h>
+#include <Ws2tcpip.h>
+
+#pragma comment (lib, "Ws2_32.lib")
 
 #define ERROR_S "SERVER ERROR: "
 #define DEFAULT_PORT 1601
