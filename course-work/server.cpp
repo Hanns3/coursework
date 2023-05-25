@@ -15,15 +15,21 @@ bool is_client_connection_close(const char* msg);
 
 int main()
 {
-    SOCKET client;
-    SOCKET server;
+    int client;
+    int server;
+    WSADATA wsaData;
 
     struct sockaddr_in server_address;
+
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+        std::cout << "Ошибка при инициализации Winsock." << std::endl;
+        return 1;
+    }
 
     client = socket(AF_INET, SOCK_STREAM, 0);
     if (client < 0)
     {
-        std::cout << "SERVER ERROR: establishing socket error";
+        std::cout << "SERVER ERROR: establishing socket error\n";
         exit(0);
     }
 

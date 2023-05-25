@@ -19,8 +19,14 @@ bool is_client_connection_close(const char* msg);
 int main(int argc, const char* arvg[])
 {
     SOCKET client;
+    WSADATA wsaData;
 
     struct sockaddr_in server_address;
+
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+        std::cout << "Ошибка при инициализации Winsock." << std::endl;
+        return 1;
+    }
 
     client = socket(AF_INET, SOCK_STREAM, 0);
     if (client < 0)
@@ -57,8 +63,8 @@ int main(int argc, const char* arvg[])
         }
 
         std::cout << "Server: ";
-        std::cin.getline(buffer, BUFFER_SIZE);
         recv(client, buffer, BUFFER_SIZE, 0);
+        std::cout << buffer << std::endl;
         if (is_client_connection_close(buffer))
         {
             break;
